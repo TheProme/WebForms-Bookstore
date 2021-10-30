@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bookstore.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -11,44 +12,78 @@ namespace Bookstore
 {
     public partial class Default : System.Web.UI.Page
     {
+        private readonly string _connectionString = WebConfigurationManager.ConnectionStrings["BookstoreDB"].ToString();
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
         }
 
-        protected void testButton_Click(object sender, EventArgs e)
+        protected void getAuthorButton_Click(object sender, EventArgs e)
         {
-            var connectionString = WebConfigurationManager.ConnectionStrings["BookstoreDB"].ToString();
-            string queryString =
-            "SELECT * FROM Authors";
-
-            string name = "";
-            string srname = "";
-
-
-            using (SqlConnection connection =
-                new SqlConnection(connectionString))
+            List<Author> authorsList = new List<Author>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                try
+                using (SqlCommand command = new SqlCommand("GetAuthors_Proc", connection))
                 {
-                    connection.Open();
-                    var reader = command.ExecuteReader();
-                    while(reader.Read())
+                    try
                     {
-                        name = reader["Name"].ToString();
-                        srname = reader["Surname"].ToString();
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        connection.Open();
+                        var reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            var existingAuthor = new Author 
+                            { 
+                                ID = Convert.ToInt32(reader["ID"].ToString()), 
+                                Name = reader["Name"].ToString(), 
+                                Surname = reader["Surname"].ToString() 
+                            };
+
+                            if(!authorsList.Contains(existingAuthor))
+                            {
+                                authorsList.Add(existingAuthor);
+                            }
+                        }
+                        connection.Close();
+
+                        AuthorsRepeater.DataSource = authorsList;
+                        AuthorsRepeater.DataBind();
                     }
-                    connection.Close();
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                    
             }
-            nameLabel.Text = name;
-            surnameLabel.Text = srname;
+        }
+
+        protected void addAuthorButton_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(newAuthorName.Text) && !String.IsNullOrEmpty(newAuthorSurname.Text))
+            {
+                using (SqlConnection connection =
+                    new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand("AddAuthor_Proc", connection))
+                    {
+                        try
+                        {
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+                            command.Parameters.Add(new SqlParameter("Name", newAuthorName.Text));
+                            command.Parameters.Add(new SqlParameter("Surname", newAuthorSurname.Text));
+                            connection.Open();
+                            var reader = command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                } 
+            }
         }
     }
 }

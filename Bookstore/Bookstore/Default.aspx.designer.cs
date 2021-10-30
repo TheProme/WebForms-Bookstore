@@ -24,6 +24,15 @@ namespace Bookstore
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// AuthorsRepeater control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater AuthorsRepeater;
+
+        /// <summary>
         /// nameLabel control.
         /// </summary>
         /// <remarks>
@@ -42,12 +51,39 @@ namespace Bookstore
         protected global::System.Web.UI.WebControls.Label surnameLabel;
 
         /// <summary>
-        /// testButton control.
+        /// getAuthorButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button testButton;
+        protected global::System.Web.UI.WebControls.Button getAuthorButton;
+
+        /// <summary>
+        /// newAuthorName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox newAuthorName;
+
+        /// <summary>
+        /// newAuthorSurname control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox newAuthorSurname;
+
+        /// <summary>
+        /// addAuthorButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button addAuthorButton;
     }
 }
