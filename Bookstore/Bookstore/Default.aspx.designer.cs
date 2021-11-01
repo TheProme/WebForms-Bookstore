@@ -24,66 +24,21 @@ namespace Bookstore
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// AuthorsRepeater control.
+        /// booksListButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater AuthorsRepeater;
+        protected global::System.Web.UI.WebControls.Button booksListButton;
 
         /// <summary>
-        /// nameLabel control.
+        /// addBookButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label nameLabel;
-
-        /// <summary>
-        /// surnameLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label surnameLabel;
-
-        /// <summary>
-        /// getAuthorButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button getAuthorButton;
-
-        /// <summary>
-        /// newAuthorName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox newAuthorName;
-
-        /// <summary>
-        /// newAuthorSurname control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox newAuthorSurname;
-
-        /// <summary>
-        /// addAuthorButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button addAuthorButton;
+        protected global::System.Web.UI.WebControls.Button addBookButton;
     }
 }

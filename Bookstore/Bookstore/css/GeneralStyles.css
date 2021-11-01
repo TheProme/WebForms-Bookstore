@@ -1,0 +1,12 @@
+﻿.btn-width100{
+    width:100px;
+}
+
+.center-screen {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin:auto;
+    min-height: 100vh;
+}

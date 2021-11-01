@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -16,16 +18,26 @@ namespace Bookstore
         private List<Author> _authors = new List<Author>();
         private List<Genre> _genres = new List<Genre>();
 
-        protected void Page_Load(object sender, EventArgs e)
+        private void BindAuthors()
         {
             authorsRepeater.DataSource = GetAuthors();
             authorsRepeater.DataBind();
+        }
+        private void BindGenres()
+        {
             genreRepeater.DataSource = GetGenres();
             genreRepeater.DataBind();
         }
 
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            BindAuthors();
+            BindGenres();
+        }
+
         public IEnumerable<Author> GetAuthors()
         {
+            _authors.Clear();
             using (SqlConnection connection =
                     new SqlConnection(_connectionString))
             {
@@ -59,6 +71,7 @@ namespace Bookstore
 
         public IEnumerable<Genre> GetGenres()
         {
+            _genres.Clear();
             using (SqlConnection connection =
                     new SqlConnection(_connectionString))
             {
@@ -88,13 +101,12 @@ namespace Bookstore
             }
             return _genres;
         }
-
-        //TODO: Add validation check
         protected void addAuthorButton_Click(object sender, EventArgs e)
         {
-            string authorName = Request.Form["authorName"];
-            string authorSurname = Request.Form["authorSurname"];
-            if(!String.IsNullOrEmpty(authorName) && !String.IsNullOrEmpty(authorSurname))
+            Author author = new Author();
+            author.Name = authorName.Text;
+            author.Surname = authorSurname.Text;
+            if (CheckValidation(author))
             {
                 using (SqlConnection connection =
                        new SqlConnection(_connectionString))
@@ -104,8 +116,8 @@ namespace Bookstore
                         try
                         {
                             command.CommandType = System.Data.CommandType.StoredProcedure;
-                            command.Parameters.Add(new SqlParameter("Name", authorName));
-                            command.Parameters.Add(new SqlParameter("Surname", authorSurname));
+                            command.Parameters.Add(new SqlParameter("Name", author.Name));
+                            command.Parameters.Add(new SqlParameter("Surname", author.Surname));
                             connection.Open();
                             var reader = command.ExecuteNonQuery();
                             connection.Close();
@@ -116,60 +128,110 @@ namespace Bookstore
                         }
                     }
                 }
-                authorSelector.Visible = true;
-                newAuthorView.Visible = false;
+                BindAuthors();
             }
+            else
+            {
+                Response.Write(ShowValidationErrors(_validationResults));
+            }
+            newAuthorView.Visible = false;
         }
 
-        protected void newAuthorButton_Click(object sender, EventArgs e)
-        {
-            authorSelector.Visible = false;
-            newAuthorView.Visible = true;
-        }
 
-
-        //TODO: Add validation check
         protected void addGenreButton_Click(object sender, EventArgs e)
         {
-            using (SqlConnection connection =
-                    new SqlConnection(_connectionString))
+            Genre genre = new Genre();
+            genre.Name = genreName.Text;
+            if(CheckValidation(genre))
             {
-                using (SqlCommand command = new SqlCommand("AddGenre_Proc", connection))
+                using (SqlConnection connection =
+                    new SqlConnection(_connectionString))
                 {
-                    try
+                    using (SqlCommand command = new SqlCommand("AddGenre_Proc", connection))
                     {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("Name", Request.Form["genreName"]));
-                        connection.Open();
-                        var reader = command.ExecuteNonQuery();
-                        connection.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
+                        try
+                        {
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+                            command.Parameters.Add(new SqlParameter("Name", genre.Name));
+                            connection.Open();
+                            var reader = command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                     }
                 }
+                BindGenres();
             }
-            genresSelector.Visible = true;
+            else
+            {
+                Response.Write(ShowValidationErrors(_validationResults));
+            }
             newGenreView.Visible = false;
-        }
-
-        protected void newGenreButton_Click(object sender, EventArgs e)
-        {
-            genresSelector.Visible = false;
-            newGenreView.Visible = true;
         }
 
         protected void addBookButton_Click(object sender, EventArgs e)
         {
-            if(this.IsValid)
+            Book book = new Book();
+            book.Title = titleBox.Text;
+            book.About = aboutBox.Text;
+            var author = _authors.Where(a => a.ID == Convert.ToInt32(Request.Form["authorSelector"])).FirstOrDefault();
+            var genre = _genres.Where(g => g.ID == Convert.ToInt32(Request.Form["genreSelector"])).FirstOrDefault();
+            book.Author = author;
+            book.Genre = genre;
+            if(CheckValidation(book))
             {
-                Console.WriteLine();
+                using (SqlConnection connection =
+                    new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand("AddBook_Proc", connection))
+                    {
+                        try
+                        {
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+                            command.Parameters.Add(new SqlParameter("Title", book.Title));
+                            command.Parameters.Add(new SqlParameter("About", book.About));
+                            command.Parameters.Add(new SqlParameter("AuthorID", book.Author.ID));
+                            command.Parameters.Add(new SqlParameter("GenreID", book.Genre.ID));
+                            connection.Open();
+                            var reader = command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+                Response.Redirect("Default.aspx");
             }
             else
             {
-                Console.WriteLine("NO");
+                Response.Write(ShowValidationErrors(_validationResults));
             }
         }
+
+        private string ShowValidationErrors(IEnumerable<ValidationResult> results)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<div><ul class='validationList'>");
+            foreach (var validationResult in results)
+            {
+                sb.Append($"<li>{validationResult.ErrorMessage}</li>");
+            }
+            sb.Append("</ul><div>");
+            return sb.ToString();
+        }
+
+        private List<ValidationResult> _validationResults = new List<ValidationResult>();
+        private bool CheckValidation(object type)
+        {
+            var context = new ValidationContext(type);
+            return Validator.TryValidateObject(type, context, _validationResults, true);
+        }
+
+
     }
 }

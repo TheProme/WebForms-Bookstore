@@ -9,13 +9,12 @@ namespace Bookstore.Models
     public class Book
     {
         public int ID { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required title")]
         public string Title { get; set; }
-        [Required]
         public string About { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required author")]
         public Author Author { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Required genre")]
         public Genre Genre { get; set; }
     }
 }
