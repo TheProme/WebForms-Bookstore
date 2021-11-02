@@ -1,4 +1,5 @@
-﻿using Bookstore.Models;
+﻿using Bookstore.Helpers;
+using Bookstore.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,17 +13,17 @@ namespace Bookstore
     public partial class AddBook : System.Web.UI.Page
     {
         private readonly string _connectionString = WebConfigurationManager.ConnectionStrings["BookstoreDB"].ToString();
-        private List<Author> _authors = new List<Author>();
-        private List<Genre> _genres = new List<Genre>();
+        private List<Author> _authors = DatabaseWorker.GetAuthors().ToList();
+        private List<Genre> _genres = DatabaseWorker.GetGenres().ToList();
 
         private void BindAuthors()
         {
-            authorsRepeater.DataSource = GetAuthors();
+            authorsRepeater.DataSource = _authors;
             authorsRepeater.DataBind();
         }
         private void BindGenres()
         {
-            genreRepeater.DataSource = GetGenres();
+            genreRepeater.DataSource = _genres;
             genreRepeater.DataBind();
         }
 
@@ -31,73 +32,6 @@ namespace Bookstore
             BindAuthors();
             BindGenres();
         }
-
-        public IEnumerable<Author> GetAuthors()
-        {
-            _authors.Clear();
-            using (SqlConnection connection =
-                    new SqlConnection(_connectionString))
-            {
-                using (SqlCommand command = new SqlCommand("GetAuthors_Proc", connection))
-                {
-                    try
-                    {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        connection.Open();
-                        var reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            Author author = new Author
-                            {
-                                ID = Convert.ToInt32(reader["ID"].ToString()),
-                                Name = reader["Name"].ToString(),
-                                Surname = reader["Surname"].ToString()
-                            };
-                            _authors.Add(author);
-                        }
-                        connection.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-            return _authors;
-        }
-
-        public IEnumerable<Genre> GetGenres()
-        {
-            _genres.Clear();
-            using (SqlConnection connection =
-                    new SqlConnection(_connectionString))
-            {
-                using (SqlCommand command = new SqlCommand("GetGenres_Proc", connection))
-                {
-                    try
-                    {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        connection.Open();
-                        var reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            Genre author = new Genre
-                            {
-                                ID = Convert.ToInt32(reader["ID"].ToString()),
-                                Name = reader["Name"].ToString()
-                            };
-                            _genres.Add(author);
-                        }
-                        connection.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-            return _genres;
-        }
         protected void addAuthorButton_Click(object sender, EventArgs e)
         {
             Author author = new Author();
@@ -105,26 +39,7 @@ namespace Bookstore
             author.Surname = authorSurname.Text;
             if (CheckValidation(author))
             {
-                using (SqlConnection connection =
-                       new SqlConnection(_connectionString))
-                {
-                    using (SqlCommand command = new SqlCommand("AddAuthor_Proc", connection))
-                    {
-                        try
-                        {
-                            command.CommandType = System.Data.CommandType.StoredProcedure;
-                            command.Parameters.Add(new SqlParameter("Name", author.Name));
-                            command.Parameters.Add(new SqlParameter("Surname", author.Surname));
-                            connection.Open();
-                            var reader = command.ExecuteNonQuery();
-                            connection.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
+                DatabaseWorker.AddAuthor(author.Name, author.Surname);
                 BindAuthors();
             }
             else
@@ -140,25 +55,7 @@ namespace Bookstore
             genre.Name = genreName.Text;
             if (CheckValidation(genre))
             {
-                using (SqlConnection connection =
-                    new SqlConnection(_connectionString))
-                {
-                    using (SqlCommand command = new SqlCommand("AddGenre_Proc", connection))
-                    {
-                        try
-                        {
-                            command.CommandType = System.Data.CommandType.StoredProcedure;
-                            command.Parameters.Add(new SqlParameter("Name", genre.Name));
-                            connection.Open();
-                            var reader = command.ExecuteNonQuery();
-                            connection.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
+                DatabaseWorker.AddGenre(genre.Name);
                 BindGenres();
             }
             else
@@ -178,29 +75,8 @@ namespace Bookstore
             book.Genre = genre;
             if (CheckValidation(book))
             {
-                using (SqlConnection connection =
-                    new SqlConnection(_connectionString))
-                {
-                    using (SqlCommand command = new SqlCommand("AddBook_Proc", connection))
-                    {
-                        try
-                        {
-                            command.CommandType = System.Data.CommandType.StoredProcedure;
-                            command.Parameters.Add(new SqlParameter("Title", book.Title));
-                            command.Parameters.Add(new SqlParameter("About", book.About));
-                            command.Parameters.Add(new SqlParameter("AuthorID", book.Author.ID));
-                            command.Parameters.Add(new SqlParameter("GenreID", book.Genre.ID));
-                            connection.Open();
-                            var reader = command.ExecuteNonQuery();
-                            connection.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
-                Response.Redirect("Default.aspx");
+                DatabaseWorker.AddBook(book.Title, book.About, book.Author.ID, book.Genre.ID);
+                Response.Redirect("BooksList.aspx");
             }
             else
             {

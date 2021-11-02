@@ -1,4 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UpdateBook.aspx.cs" Inherits="Bookstore.UpdateBook" %>
+<%@ Import Namespace="Bookstore.Helpers" %>
 
 <!DOCTYPE html>
 
@@ -28,7 +29,7 @@
                 </div>
                 <select id="authorSelect" class="custom-select">
                     <% 
-                        foreach (var item in GetAuthors())
+                        foreach (var item in DatabaseWorker.GetAuthors())
                         {
                             string htmlString;
                             if (CurrentBook.Author?.ID == item.ID)
@@ -50,7 +51,7 @@
                 </div>
                 <select id="genreSelect" class="custom-select">
                     <% 
-                        foreach (var item in GetGenres())
+                        foreach (var item in DatabaseWorker.GetGenres())
                         {
                             string htmlString;
                             if (CurrentBook.Genre?.ID == item.ID)
