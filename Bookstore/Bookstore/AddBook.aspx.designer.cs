@@ -24,6 +24,15 @@ namespace Bookstore
         protected global::System.Web.UI.HtmlControls.HtmlForm addForm;
 
         /// <summary>
+        /// validationSummary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl validationSummary;
+
+        /// <summary>
         /// titleBox control.
         /// </summary>
         /// <remarks>
@@ -85,6 +94,15 @@ namespace Bookstore
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button addBookButton;
+
+        /// <summary>
+        /// backButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button backButton;
 
         /// <summary>
         /// newAuthorView control.

@@ -24,6 +24,15 @@ namespace Bookstore
         protected global::System.Web.UI.WebControls.Repeater booksRepeater;
 
         /// <summary>
+        /// rptPager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptPager;
+
+        /// <summary>
         /// newBookButton control.
         /// </summary>
         /// <remarks>

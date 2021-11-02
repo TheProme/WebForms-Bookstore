@@ -77,7 +77,6 @@
     </Content>
     <Content Include="BooksList.aspx" />
     <Content Include="css\GeneralStyles.css" />
-    <Content Include="css\ModalFormStyle.css" />
     <Content Include="Default.aspx" />
     <Content Include="UpdateBook.aspx" />
     <Content Include="Web.config" />

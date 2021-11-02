@@ -1,14 +1,11 @@
-﻿using System;
+﻿using Bookstore.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Configuration;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using Bookstore.Models;
 
 namespace Bookstore
 {
@@ -48,7 +45,7 @@ namespace Bookstore
                         command.CommandType = System.Data.CommandType.StoredProcedure;
                         connection.Open();
                         var reader = command.ExecuteReader();
-                        while(reader.Read())
+                        while (reader.Read())
                         {
                             Author author = new Author
                             {
@@ -132,9 +129,8 @@ namespace Bookstore
             }
             else
             {
-                Response.Write(ShowValidationErrors(_validationResults));
+                validationSummary.InnerHtml = ShowValidationErrors(_validationResults);
             }
-            newAuthorView.Visible = false;
         }
 
 
@@ -142,7 +138,7 @@ namespace Bookstore
         {
             Genre genre = new Genre();
             genre.Name = genreName.Text;
-            if(CheckValidation(genre))
+            if (CheckValidation(genre))
             {
                 using (SqlConnection connection =
                     new SqlConnection(_connectionString))
@@ -167,9 +163,8 @@ namespace Bookstore
             }
             else
             {
-                Response.Write(ShowValidationErrors(_validationResults));
+                validationSummary.InnerHtml = ShowValidationErrors(_validationResults);
             }
-            newGenreView.Visible = false;
         }
 
         protected void addBookButton_Click(object sender, EventArgs e)
@@ -181,7 +176,7 @@ namespace Bookstore
             var genre = _genres.Where(g => g.ID == Convert.ToInt32(Request.Form["genreSelector"])).FirstOrDefault();
             book.Author = author;
             book.Genre = genre;
-            if(CheckValidation(book))
+            if (CheckValidation(book))
             {
                 using (SqlConnection connection =
                     new SqlConnection(_connectionString))
@@ -209,19 +204,19 @@ namespace Bookstore
             }
             else
             {
-                Response.Write(ShowValidationErrors(_validationResults));
+                validationSummary.InnerHtml = ShowValidationErrors(_validationResults);
             }
         }
 
         private string ShowValidationErrors(IEnumerable<ValidationResult> results)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<div><ul class='validationList'>");
+            sb.Append("<div><ul>");
             foreach (var validationResult in results)
             {
                 sb.Append($"<li>{validationResult.ErrorMessage}</li>");
             }
-            sb.Append("</ul><div>");
+            sb.Append("</ul></div>");
             return sb.ToString();
         }
 
@@ -230,6 +225,11 @@ namespace Bookstore
         {
             var context = new ValidationContext(type);
             return Validator.TryValidateObject(type, context, _validationResults, true);
+        }
+
+        protected void backButton_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("BooksList.aspx");
         }
 
 

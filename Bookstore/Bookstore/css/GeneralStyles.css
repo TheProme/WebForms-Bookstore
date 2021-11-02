@@ -1,7 +1,23 @@
-﻿.btn-width100{
-    width:100px;
+﻿@media screen and (max-width: 600px) {
+    body .table {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+    }
+
+    .table .tr {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .table .td {
+        white-space: nowrap;
+    }
 }
 
+.btn-width100{
+    width:100px;
+}
 .center-screen {
     display: block;
     justify-content: center;

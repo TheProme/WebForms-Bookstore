@@ -1,14 +1,9 @@
 ﻿using Bookstore.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Configuration;
 using System.Web.Services;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Bookstore
 {
@@ -16,34 +11,6 @@ namespace Bookstore
     {
         private static readonly string _connectionString = WebConfigurationManager.ConnectionStrings["BookstoreDB"].ToString();
         public Book CurrentBook { get; set; } = new Book();
-
-        [WebMethod]
-        public static void UpdateBookMethod(int ID, string Title, string About, int AuthorID, int GenreID)
-        {
-            using (SqlConnection connection =
-                    new SqlConnection(_connectionString))
-            {
-                using (SqlCommand command = new SqlCommand("UpdateBook_Proc", connection))
-                {
-                    try
-                    {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("BookID", ID));
-                        command.Parameters.Add(new SqlParameter("Title", Title));
-                        command.Parameters.Add(new SqlParameter("About", About));
-                        command.Parameters.Add(new SqlParameter("AuthorID", AuthorID));
-                        command.Parameters.Add(new SqlParameter("GenreID", GenreID));
-                        connection.Open();
-                        var reader = command.ExecuteNonQuery();
-                        connection.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-        }
 
         public IEnumerable<Author> GetAuthors()
         {
@@ -110,6 +77,34 @@ namespace Bookstore
                 }
             }
             return genres;
+        }
+
+        [WebMethod]
+        public static void UpdateBookMethod(int ID, string Title, string About, int AuthorID, int GenreID)
+        {
+            using (SqlConnection connection =
+                    new SqlConnection(_connectionString))
+            {
+                using (SqlCommand command = new SqlCommand("UpdateBook_Proc", connection))
+                {
+                    try
+                    {
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("BookID", ID));
+                        command.Parameters.Add(new SqlParameter("Title", Title));
+                        command.Parameters.Add(new SqlParameter("About", About));
+                        command.Parameters.Add(new SqlParameter("AuthorID", AuthorID));
+                        command.Parameters.Add(new SqlParameter("GenreID", GenreID));
+                        connection.Open();
+                        var reader = command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
         }
 
         protected void Page_Load(object sender, EventArgs e)
